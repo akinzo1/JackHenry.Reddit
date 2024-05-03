@@ -1,0 +1,6 @@
+@Reddit.API_HostAddress = http://localhost:5155
+
+GET {{Reddit.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

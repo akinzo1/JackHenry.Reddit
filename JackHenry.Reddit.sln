@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34728.123
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedditProcessor", "RedditProcessor\RedditProcessor.csproj", "{51359EAD-8B9D-4822-8BA4-C058DD2D9F07}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reddit.API", "Reddit.API\Reddit.API.csproj", "{A4A6E108-69CC-4CF2-8C71-50303CDCFA09}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reddit.AppHost", "Reddit.AppHost\Reddit.AppHost.csproj", "{894698BC-6568-4595-B6D0-0FFBDBFBAD60}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reddit.ServiceDefaults", "Reddit.ServiceDefaults\Reddit.ServiceDefaults.csproj", "{198EA877-542D-4575-A825-A82056BAC874}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{51359EAD-8B9D-4822-8BA4-C058DD2D9F07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51359EAD-8B9D-4822-8BA4-C058DD2D9F07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51359EAD-8B9D-4822-8BA4-C058DD2D9F07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51359EAD-8B9D-4822-8BA4-C058DD2D9F07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4A6E108-69CC-4CF2-8C71-50303CDCFA09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4A6E108-69CC-4CF2-8C71-50303CDCFA09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4A6E108-69CC-4CF2-8C71-50303CDCFA09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4A6E108-69CC-4CF2-8C71-50303CDCFA09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{894698BC-6568-4595-B6D0-0FFBDBFBAD60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{894698BC-6568-4595-B6D0-0FFBDBFBAD60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{894698BC-6568-4595-B6D0-0FFBDBFBAD60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{894698BC-6568-4595-B6D0-0FFBDBFBAD60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{198EA877-542D-4575-A825-A82056BAC874}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{198EA877-542D-4575-A825-A82056BAC874}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{198EA877-542D-4575-A825-A82056BAC874}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{198EA877-542D-4575-A825-A82056BAC874}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C2DEA46E-7D51-4BB6-8480-03938FC6439F}
+	EndGlobalSection
+EndGlobal
