@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualBasic;
 using System.Text;
 
@@ -16,14 +17,19 @@ public static class RedditApi
     }
 
 
-    public static async Task<string> UpdateReddit()
+    public static async Task<Results<Ok, BadRequest<string>>> UpdateReddit([AsParameters] RedditService service, [FromHeader(Name = "x-requestid")] Guid requestId)
     {
 
         //var cardTypes = await orderQueries.GetCardTypesAsync();
+        service.Logger.LogInformation("hitting api");
+        var updateRedditCommand = new UpdateRedditCommand("funny");
         
-        var command = new SetRedditCommand("list");
+        var commandResult = await service.Mediator.Send(updateRedditCommand);//.GetString();
+        
+        service.Logger.LogInformation($"logged {commandResult} to cache");
 
-        return await GetString();
+        return TypedResults.Ok();
+
 
     }
 
@@ -33,7 +39,3 @@ public static class RedditApi
     }
 
 }
-
-public record SetRedditCommand(
-string list
-);

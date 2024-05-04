@@ -1,4 +1,8 @@
 ﻿
+using Reddit.API.Repository;
+using Reddit.API;
+using System.Reflection;
+
 public static class Extensions
 {
     public static void AddApplicationServices(this IHostApplicationBuilder builder)
@@ -6,10 +10,12 @@ public static class Extensions
         //var services = builder.Services;
         
         builder.AddRedisClient("redis");
+        
+        builder.Services.AddScoped<IRedditRepository, RedisRedditRepository>();
 
         builder.Services.AddHttpContextAccessor();
 
-        builder.Services.AddSwaggerGen();
+        //builder.Services.AddSwaggerGen();
 
         //// Pooling is disabled because of the following error:
         //// Unhandled exception. System.InvalidOperationException:
@@ -31,17 +37,16 @@ public static class Extensions
         //       .AddEventBusSubscriptions();
 
 
-        //services.AddRedisClient("redis");
-
         //// Configure mediatR
-        //services.AddMediatR(cfg =>
-        //{
-        //    cfg.RegisterServicesFromAssemblyContaining(typeof(Program));
+        builder.Services.AddMediatR(cfg =>
+        {
+            //cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+            cfg.RegisterServicesFromAssemblyContaining(typeof(Program));
 
-        //    cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
-        //    cfg.AddOpenBehavior(typeof(ValidatorBehavior<,>));
-        //    cfg.AddOpenBehavior(typeof(TransactionBehavior<,>));
-        //});
+            //cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
+            //cfg.AddOpenBehavior(typeof(ValidatorBehavior<,>));
+            //cfg.AddOpenBehavior(typeof(TransactionBehavior<,>));
+        });
 
         //// Register the command validators for the validator behavior (validators based on FluentValidation library)
         //services.AddSingleton<IValidator<CancelOrderCommand>, CancelOrderCommandValidator>();

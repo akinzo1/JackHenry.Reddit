@@ -8,13 +8,21 @@ builder.AddServiceDefaults();
 // Add services to the container.
 builder.AddApplicationServices();
 
+
 builder.Services.AddControllers();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+//builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+var withApiVersioning = builder.Services.AddApiVersioning();
+builder.AddDefaultOpenApi(withApiVersioning);
 
 var app = builder.Build();
 
 app.MapDefaultEndpoints();
 
 var reddit = app.NewVersionedApi("Reddit");
+
 
 reddit.MapRedditApiV1();
 

@@ -1,10 +1,12 @@
 
 var builder = DistributedApplication.CreateBuilder(args);
 
-builder.AddRedis("cache");
+var redis = builder.AddRedis("redis");
 
 
-builder.AddProject<Projects.Reddit_API>("reddit-api");
+builder.AddProject<Projects.Reddit_API>("reddit-api")
+    .WithReference(redis);
+    
 
 builder.AddProject<Projects.RedditProcessor>("redditprocessor");
 

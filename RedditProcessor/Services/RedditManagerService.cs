@@ -26,12 +26,14 @@ public class RedditManagerService(HttpClient httpClient, ILogger<RedditManagerSe
 
             //Make api call to handle the updating of the cache
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, remoteServiceBaseUrl);
+            requestMessage.Headers.Add("x-requestid", Guid.NewGuid().ToString());
+
             var result = await httpClient.SendAsync(requestMessage);
             var resp = await result.Content.ReadAsStringAsync();
 
             logger.LogInformation($"Loaded {resp} at {DateTime.Now}");
 
-            await Task.Delay(1000, stoppingToken);
+            await Task.Delay(10000, stoppingToken);
         }
     }
 }
