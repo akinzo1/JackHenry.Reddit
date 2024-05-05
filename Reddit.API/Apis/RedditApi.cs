@@ -22,7 +22,7 @@ public static class RedditApi
     {
 
         service.Logger.LogInformation("Request to log list to cache");
-        var updateRedditCommand = new UpdateRedditCommand(requestId, reddit, statistics.Split());
+        var updateRedditCommand = new UpdateRedditCommand(requestId, reddit, statistics.Split(","));
         var commandResult = await service.Mediator.Send(updateRedditCommand);
 
         var response = new RedditApiResponse()
@@ -30,6 +30,7 @@ public static class RedditApi
             RedditListName = commandResult.RedditListName,
             Used = commandResult.Used,
             Remaining = commandResult.Remaining,
+            Reset = commandResult.Reset
         };
 
         service.Logger.LogInformation($"Successfully logged and loaded {commandResult.RedditListName} to/from cache. YYY was not able to be logged to cache");

@@ -5,11 +5,15 @@ VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedditProcessor", "RedditProcessor\RedditProcessor.csproj", "{51359EAD-8B9D-4822-8BA4-C058DD2D9F07}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reddit.API", "Reddit.API\Reddit.API.csproj", "{A4A6E108-69CC-4CF2-8C71-50303CDCFA09}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reddit.API", "Reddit.API\Reddit.API.csproj", "{A4A6E108-69CC-4CF2-8C71-50303CDCFA09}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reddit.AppHost", "Reddit.AppHost\Reddit.AppHost.csproj", "{894698BC-6568-4595-B6D0-0FFBDBFBAD60}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reddit.AppHost", "Reddit.AppHost\Reddit.AppHost.csproj", "{894698BC-6568-4595-B6D0-0FFBDBFBAD60}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reddit.ServiceDefaults", "Reddit.ServiceDefaults\Reddit.ServiceDefaults.csproj", "{198EA877-542D-4575-A825-A82056BAC874}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBus", "EventBus\EventBus.csproj", "{E2FB091C-ED79-4B56-A26A-4FB0BAF2A34F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBusRabbitMQ", "EventBusRabbitMQ\EventBusRabbitMQ.csproj", "{B41BBD7F-ADB2-4020-B543-72C6F588F79E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +37,14 @@ Global
 		{198EA877-542D-4575-A825-A82056BAC874}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{198EA877-542D-4575-A825-A82056BAC874}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{198EA877-542D-4575-A825-A82056BAC874}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2FB091C-ED79-4B56-A26A-4FB0BAF2A34F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2FB091C-ED79-4B56-A26A-4FB0BAF2A34F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2FB091C-ED79-4B56-A26A-4FB0BAF2A34F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2FB091C-ED79-4B56-A26A-4FB0BAF2A34F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B41BBD7F-ADB2-4020-B543-72C6F588F79E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B41BBD7F-ADB2-4020-B543-72C6F588F79E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B41BBD7F-ADB2-4020-B543-72C6F588F79E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B41BBD7F-ADB2-4020-B543-72C6F588F79E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

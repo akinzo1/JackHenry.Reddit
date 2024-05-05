@@ -1,6 +1,4 @@
 using System.Net.Http.Json;
-using System.Net.Http;
-using System.Text.Json.Serialization;
 using System.Text.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.WebUtilities;
@@ -29,7 +27,7 @@ public class RedditManagerService(HttpClient httpClient, ILogger<RedditManagerSe
             }
 
 
-            // Get RedditList that didn't get to be updated and add to thredditList. Process those first
+            // Get RedditList that didn't get to be updated and add to the redditList. Process those first
         
 
 
@@ -60,7 +58,7 @@ public class RedditManagerService(HttpClient httpClient, ILogger<RedditManagerSe
                     logger.LogInformation($"Requested to update {redditName}. Requests remaining {remaining}. Request Used {used}. Request Reset: {reset}");
                 }
 
-                await Task.Delay(1000, stoppingToken);
+                await Task.Delay(144444000, stoppingToken);
 
             }
 

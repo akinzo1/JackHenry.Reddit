@@ -2,6 +2,11 @@
 using Reddit.API.Repository;
 using Reddit.API;
 using System.Reflection;
+using EventBusRabbitMQ;
+using EventBus.Extensions;
+using Reddit.API.Application.IntegrationEvents.Events;
+using Reddit.API.Application.IntegrationEvents.EventHandling;
+using Reddit.API.Model.Configuration;
 
 public static class Extensions
 {
@@ -12,6 +17,7 @@ public static class Extensions
         builder.AddRedisClient("redis");
 
         services.AddScoped<IRedditRepository, RedisRedditRepository>();
+        services.Configure<RedditSettings>(builder.Configuration.GetSection("RedditSettings"));
 
         services.AddHttpContextAccessor();
 
@@ -35,7 +41,9 @@ public static class Extensions
 
         //builder.AddRabbitMqEventBus("eventbus")
         //       .AddEventBusSubscriptions();
-
+        //add message broker
+        builder.AddRabbitMqEventBus("eventbus")
+            .AddSubscription<UpdateRedditRequestIntegrationEvent, UpdateRedditRequestIntegrationEventHandler>();
 
         //// Configure mediatR
         services.AddMediatR(cfg =>

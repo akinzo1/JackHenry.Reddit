@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using EventBus.Abstractions;
+using MediatR;
+using Reddit.API.Application.IntegrationEvents.Events;
 using Reddit.API.Model;
 
 namespace Reddit.API.Application.Commands
@@ -6,10 +8,17 @@ namespace Reddit.API.Application.Commands
     public class UpdateRedditCommandHandler : IRequestHandler<UpdateRedditCommand, (string RedditListName, int Remaining, int Used, int Reset)>
     {
         private readonly IRedditRepository _redditRepository;
+        private readonly ILogger<UpdateRedditCommandHandler> _logger;
+        private readonly IEventBus _eventBus;
 
-        public UpdateRedditCommandHandler(IRedditRepository redditRepository)
+        public UpdateRedditCommandHandler(IEventBus eventBus, IRedditRepository redditRepository,
+        ILogger<UpdateRedditCommandHandler> logger)
+            
         {
             _redditRepository = redditRepository;
+            _logger = logger;
+            _eventBus = eventBus;
+
         }
 
         public async Task<(string RedditListName, int Remaining, int Used, int Reset)> Handle(UpdateRedditCommand request, CancellationToken cancellationToken)
@@ -37,13 +46,21 @@ namespace Reddit.API.Application.Commands
             var list = new RedditList();
             list.ListName = request.list;
 
-            var savedItem = await _redditRepository.UpdateListAsync(list);
+            //var savedItem = await _redditRepository.UpdateListAsync(list);
 
             foreach (var statistic in request.statistics)
             {
 
+                var updateRequestStarted = new UpdateRedditRequestIntegrationEvent(request.id, request.list, statistic);
+                
+                await _eventBus.PublishAsync(updateRequestStarted);
+
+                _logger.LogInformation("Publishing integration event: {IntegrationEventId_published} - ({@IntegrationEvent})", updateRequestStarted.Id, updateRequestStarted);
+
+                //await _eventBus.PublishAsync(orderStartedIntegrationEvent);
+
                 // return count of rateLimits to use to determine when next to load
-                var cached = _redditRepository.GetListAsync("CacheLimits");
+                var cached = await _redditRepository.GetListAsync("CacheLimits");
 
                 // check cache for rate limits 
                 // check cache to see if there are other stats needing to be updated that are getting stale
