@@ -8,9 +8,6 @@ builder.AddServiceDefaults();
 // Add services to the container.
 builder.AddApplicationServices();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddSwaggerGen();
-
 var withApiVersioning = builder.Services.AddApiVersioning();
 builder.AddDefaultOpenApi(withApiVersioning);
 

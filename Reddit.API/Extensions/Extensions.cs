@@ -15,7 +15,7 @@ public static class Extensions
 
         services.AddHttpContextAccessor();
 
-        //builder.Services.AddSwaggerGen();
+        builder.Services.AddSwaggerGen();
 
         //// Pooling is disabled because of the following error:
         //// Unhandled exception. System.InvalidOperationException:
@@ -58,6 +58,19 @@ public static class Extensions
         //services.AddScoped<IBuyerRepository, BuyerRepository>();
         //services.AddScoped<IOrderRepository, OrderRepository>();
         //services.AddScoped<IRequestManager, RequestManager>();
+    }
+
+    //Convert to DateTime
+    public static DateTime UnixSecondsToDateTime(long timestamp, bool local = false)
+    {
+        var offset = DateTimeOffset.FromUnixTimeSeconds(timestamp);
+        return local ? offset.LocalDateTime : offset.UtcDateTime;
+    }
+
+    public static DateTime UnixMillisecondsToDateTime(long timestamp, bool local = false)
+    {
+        var offset = DateTimeOffset.FromUnixTimeMilliseconds(timestamp);
+        return local ? offset.LocalDateTime : offset.UtcDateTime;
     }
 
 }

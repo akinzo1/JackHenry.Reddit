@@ -28,6 +28,11 @@ public class RedditManagerService(HttpClient httpClient, ILogger<RedditManagerSe
                 logger.LogInformation("This logger working at: {time}", DateTimeOffset.Now);
             }
 
+
+            // Get RedditList that didn't get to be updated and add to thredditList. Process those first
+        
+
+
             foreach (var reddit in redditList)
             {
 
@@ -40,11 +45,20 @@ public class RedditManagerService(HttpClient httpClient, ILogger<RedditManagerSe
 
                 var result = await httpClient.SendAsync(requestMessage);
                 //if success/failure, update the string builder to log to console at the end
-                var resp = await result.Content.ReadFromJsonAsync<RedditApiResponse>();
+                var response = await result.Content.ReadFromJsonAsync<RedditApiResponse>();
 
-                
+
                 // Make the calculation for how long to delay for
+                if (response != null)
+                {
 
+                    var redditName = response.RedditListName;
+                    var remaining = response.Remaining;
+                    var used = response.Used;
+                    var reset = response.Reset;
+
+                    logger.LogInformation($"Requested to update {redditName}. Requests remaining {remaining}. Request Used {used}. Request Reset: {reset}");
+                }
 
                 await Task.Delay(1000, stoppingToken);
 
@@ -57,7 +71,8 @@ public class RedditManagerService(HttpClient httpClient, ILogger<RedditManagerSe
 
 public record RedditApiResponse
 {
-    public string ListName { get; set; }
-    public int HitsUsed { get; set; }
-    public int HitsLeft { get; set; }
+    public required string RedditListName { get; set; }
+    public int Remaining { get; set; }
+    public int Used { get; set; }
+    public int Reset { get; set; }
 }

@@ -3,7 +3,7 @@ using Reddit.API.Model;
 
 namespace Reddit.API.Application.Commands
 {
-    public class UpdateRedditCommandHandler : IRequestHandler<UpdateRedditCommand, (string RedditListName, int HitsUsed, int HitsLeft)>
+    public class UpdateRedditCommandHandler : IRequestHandler<UpdateRedditCommand, (string RedditListName, int Remaining, int Used, int Reset)>
     {
         private readonly IRedditRepository _redditRepository;
 
@@ -12,7 +12,7 @@ namespace Reddit.API.Application.Commands
             _redditRepository = redditRepository;
         }
 
-        public async Task<(string RedditListName, int HitsUsed, int HitsLeft)> Handle(UpdateRedditCommand request, CancellationToken cancellationToken)
+        public async Task<(string RedditListName, int Remaining, int Used, int Reset)> Handle(UpdateRedditCommand request, CancellationToken cancellationToken)
         {
 
             // The task is to store multiple reddit and track MostUser and Upvotes classifications.
@@ -41,6 +41,10 @@ namespace Reddit.API.Application.Commands
 
             foreach (var statistic in request.statistics)
             {
+
+                // return count of rateLimits to use to determine when next to load
+                var cached = _redditRepository.GetListAsync("CacheLimits");
+
                 // check cache for rate limits 
                 // check cache to see if there are other stats needing to be updated that are getting stale
 
@@ -53,16 +57,14 @@ namespace Reddit.API.Application.Commands
 
                 // otherwise
 
-                
+
 
 
             }
 
-            // return count of rateLimits to use to determine when next to load
-            var cached = _redditRepository.GetListAsync("");
 
 
-            return await Task.FromResult((request.list, 50, 5));
+            return await Task.FromResult((request.list, 50, 8, 5));
         }
     }
 }

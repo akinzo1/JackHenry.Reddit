@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualBasic;
+using Reddit.API.Model.Api;
 using System.Text;
 
 namespace Reddit.API;
@@ -22,26 +23,19 @@ public static class RedditApi
 
         service.Logger.LogInformation("Request to log list to cache");
         var updateRedditCommand = new UpdateRedditCommand(requestId, reddit, statistics.Split());
-        
         var commandResult = await service.Mediator.Send(updateRedditCommand);
+
         var response = new RedditApiResponse()
         {
-            ListName = commandResult.RedditListName,
-            HitsLeft = commandResult.HitsLeft,
-            HitsUsed = commandResult.HitsUsed,
+            RedditListName = commandResult.RedditListName,
+            Used = commandResult.Used,
+            Remaining = commandResult.Remaining,
         };
 
-        service.Logger.LogInformation($"Successfully logged and loaded {commandResult} to/from cache. YYY was not able to be logged to cache");
-        
+        service.Logger.LogInformation($"Successfully logged and loaded {commandResult.RedditListName} to/from cache. YYY was not able to be logged to cache");
+
         return TypedResults.Ok(response);
 
     }
 
-}
-
-public record RedditApiResponse
-{
-    public string ListName { get; set; }
-    public int HitsUsed { get; set; }
-    public int HitsLeft { get; set; }
 }
