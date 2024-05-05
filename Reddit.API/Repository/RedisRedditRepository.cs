@@ -17,9 +17,9 @@ namespace Reddit.API.Repository
             return await _database.KeyDeleteAsync(GetListKey(id));
         }
 
-        public async Task<RedditList> GetListAsync(string customerId)
+        public async Task<RedditList?> GetListAsync(string redditListName)
         {
-            using var data = await _database.StringGetLeaseAsync(GetListKey(customerId));
+            using var data = await _database.StringGetLeaseAsync(GetListKey(redditListName));
 
             if (data is null || data.Length == 0)
             {
@@ -28,7 +28,7 @@ namespace Reddit.API.Repository
             return JsonSerializer.Deserialize(data.Span, RedditSerializationContext.Default.RedditList);
         }
 
-        public async Task<RedditList> UpdateListAsync(RedditList reddit)
+        public async Task<RedditList?> UpdateListAsync(RedditList reddit)
         {
             var json = JsonSerializer.SerializeToUtf8Bytes(reddit, RedditSerializationContext.Default.RedditList);
             var created = await _database.StringSetAsync(GetListKey(reddit.ListName), json);
@@ -39,8 +39,7 @@ namespace Reddit.API.Repository
                 return null;
             }
 
-
-            logger.LogInformation("List item persisted successfully.");
+            logger.LogInformation($"{reddit.ListName} persisted successfully.");
             return await GetListAsync(reddit.ListName);
         }
     }

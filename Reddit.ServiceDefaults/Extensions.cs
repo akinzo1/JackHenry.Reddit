@@ -13,7 +13,6 @@ using System.Net;
 using System.Net.Http;
 using static Microsoft.IO.RecyclableMemoryStreamManager;
 using OpenTelemetry.Logs;
-using Google.Protobuf.WellKnownTypes;
 
 namespace Microsoft.Extensions.Hosting;
 
@@ -33,21 +32,16 @@ public static class Extensions
             http.AddStandardResilienceHandler();
             http.ConfigureHttpClient(o => {
                 o.BaseAddress = new("https://localhost:7285/");
+                o.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionOrLower;
+                o.DefaultRequestVersion = new Version("1.0");
             });
             http.AddDefaultLogger();
 
             // Turn on service discovery by default
             http.AddServiceDiscovery();
-        }).AddApiVersioning(options =>
+        }).AddApiVersioning(o =>
         {
-            options.AssumeDefaultVersionWhenUnspecified = true;
-            options.DefaultApiVersion = new ApiVersion(1, 0); //same as ApiVersion.Default
-            options.ReportApiVersions = true;
-            options.ApiVersionReader = ApiVersionReader.Combine(
-                new UrlSegmentApiVersionReader(),
-                new QueryStringApiVersionReader("api-version"),
-                new HeaderApiVersionReader("X-Version"),
-                new MediaTypeApiVersionReader("X-Version"));
+            o.AssumeDefaultVersionWhenUnspecified = true;
         }).AddMvc();
 
         return builder;
@@ -85,12 +79,12 @@ public static class Extensions
     {
         var useOtlpExporter = !string.IsNullOrWhiteSpace(builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"]);
 
-        if (useOtlpExporter)
-        {
-            //builder.Services.AddOpenTelemetry().UseOtlpExporter();
-            builder.Services.Configure<OpenTelemetryLoggerOptions>(logging => logging.AddOtlpExporter());
+        //if (useOtlpExporter)
+        //{
+        //    //builder.Services.AddOpenTelemetry().UseOtlpExporter();
+        //    builder.Services.Configure<OpenTelemetryLoggerOptions>(logging => logging.AddOtlpExporter());
 
-        }
+        //}
 
 
 

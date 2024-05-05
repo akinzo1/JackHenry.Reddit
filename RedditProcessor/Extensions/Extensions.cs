@@ -16,6 +16,7 @@ namespace RedditProcessor.Extensions
             builder.Services.AddHostedService<RedditManagerService>();
 
         }
+
     }
 }
 

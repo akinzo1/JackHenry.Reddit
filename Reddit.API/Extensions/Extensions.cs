@@ -7,13 +7,13 @@ public static class Extensions
 {
     public static void AddApplicationServices(this IHostApplicationBuilder builder)
     {
-        //var services = builder.Services;
+        var services = builder.Services;
         
         builder.AddRedisClient("redis");
-        
-        builder.Services.AddScoped<IRedditRepository, RedisRedditRepository>();
 
-        builder.Services.AddHttpContextAccessor();
+        services.AddScoped<IRedditRepository, RedisRedditRepository>();
+
+        services.AddHttpContextAccessor();
 
         //builder.Services.AddSwaggerGen();
 
@@ -38,7 +38,7 @@ public static class Extensions
 
 
         //// Configure mediatR
-        builder.Services.AddMediatR(cfg =>
+        services.AddMediatR(cfg =>
         {
             //cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
             cfg.RegisterServicesFromAssemblyContaining(typeof(Program));

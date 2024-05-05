@@ -2,4 +2,4 @@
 
 namespace Reddit.API;
 
-public record UpdateRedditCommand(string list) : IRequest<string>;
+public record UpdateRedditCommand(Guid id, string list, string[] statistics) : IRequest<(string RedditListName, int HitsUsed, int HitsLeft)>;
