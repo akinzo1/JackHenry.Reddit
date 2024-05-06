@@ -2,10 +2,11 @@
 using MediatR;
 using Reddit.API.Application.IntegrationEvents.Events;
 using Reddit.API.Model;
+using Reddit.API.Model.Api;
 
 namespace Reddit.API.Application.Commands
 {
-    public class UpdateRedditCommandHandler : IRequestHandler<UpdateRedditCommand, (string RedditListName, int Remaining, int Used, int Reset)>
+    public class UpdateRedditCommandHandler : IRequestHandler<UpdateRedditCommand, ApiLimits>
     {
         private readonly IRedditRepository _redditRepository;
         private readonly ILogger<UpdateRedditCommandHandler> _logger;
@@ -21,7 +22,7 @@ namespace Reddit.API.Application.Commands
 
         }
 
-        public async Task<(string RedditListName, int Remaining, int Used, int Reset)> Handle(UpdateRedditCommand request, CancellationToken cancellationToken)
+        public async Task<ApiLimits> Handle(UpdateRedditCommand request, CancellationToken cancellationToken)
         {
 
             // The task is to store multiple reddit and track MostUser and Upvotes classifications.
@@ -43,8 +44,6 @@ namespace Reddit.API.Application.Commands
             // Load from RedditAPI
 
             // Store it in cache
-            var list = new RedditList();
-            list.ListName = request.list;
 
             //var savedItem = await _redditRepository.UpdateListAsync(list);
 
@@ -57,10 +56,7 @@ namespace Reddit.API.Application.Commands
 
                 _logger.LogInformation("Publishing integration event: {IntegrationEventId_published} - ({@IntegrationEvent})", updateRequestStarted.Id, updateRequestStarted);
 
-                //await _eventBus.PublishAsync(orderStartedIntegrationEvent);
-
                 // return count of rateLimits to use to determine when next to load
-                var cached = await _redditRepository.GetListAsync("CacheLimits");
 
                 // check cache for rate limits 
                 // check cache to see if there are other stats needing to be updated that are getting stale
@@ -79,9 +75,10 @@ namespace Reddit.API.Application.Commands
 
             }
 
+            var cached = await _redditRepository.GetLimitsAsync() ?? new ApiLimits() { RateLimit_Remaining = 0, RateLimit_Reset = 0, RateLimit_Used = 0 };
 
+            return await Task.FromResult(cached);
 
-            return await Task.FromResult((request.list, 50, 8, 5));
         }
     }
 }

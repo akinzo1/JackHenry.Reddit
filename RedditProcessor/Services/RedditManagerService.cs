@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using System.Runtime.InteropServices;
 using System.Text.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.WebUtilities;
@@ -28,7 +29,7 @@ public class RedditManagerService(HttpClient httpClient, ILogger<RedditManagerSe
 
 
             // Get RedditList that didn't get to be updated and add to the redditList. Process those first
-        
+
 
 
             foreach (var reddit in redditList)
@@ -43,22 +44,18 @@ public class RedditManagerService(HttpClient httpClient, ILogger<RedditManagerSe
 
                 var result = await httpClient.SendAsync(requestMessage);
                 //if success/failure, update the string builder to log to console at the end
-                var response = await result.Content.ReadFromJsonAsync<RedditApiResponse>();
+                var response = await result.Content.ReadFromJsonAsync<ApiLimits>();
 
 
                 // Make the calculation for how long to delay for
                 if (response != null)
                 {
-
-                    var redditName = response.RedditListName;
-                    var remaining = response.Remaining;
-                    var used = response.Used;
-                    var reset = response.Reset;
-
-                    logger.LogInformation($"Requested to update {redditName}. Requests remaining {remaining}. Request Used {used}. Request Reset: {reset}");
+                    logger.LogInformation($"Requested to update {reddit}. Requests remaining {response.RateLimit_Remaining}. Request Used {response.RateLimit_Used}. Request Reset: {response.RateLimit_Reset}");
                 }
 
-                await Task.Delay(144444000, stoppingToken);
+
+                // With this new information, plan to delay proportionally
+                await Task.Delay(1000, stoppingToken);
 
             }
 
@@ -67,10 +64,9 @@ public class RedditManagerService(HttpClient httpClient, ILogger<RedditManagerSe
     }
 }
 
-public record RedditApiResponse
+public class ApiLimits
 {
-    public required string RedditListName { get; set; }
-    public int Remaining { get; set; }
-    public int Used { get; set; }
-    public int Reset { get; set; }
+    public int RateLimit_Remaining { get; set; }
+    public int RateLimit_Used { get; set; }
+    public int RateLimit_Reset { get; set; }
 }

@@ -17,6 +17,7 @@ public static class Extensions
         builder.AddRedisClient("redis");
 
         services.AddScoped<IRedditRepository, RedisRedditRepository>();
+
         services.Configure<RedditSettings>(builder.Configuration.GetSection("RedditSettings"));
 
         services.AddHttpContextAccessor();

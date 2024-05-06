@@ -2,7 +2,7 @@
 
 namespace Reddit.API.Model.Api
 {
-    public class SubRedditApiResponse : APILimits
+    public class SubRedditApiResponse
     {
         public required string Kind { get; set; }
         public required string SubRedditName { get; set; }
@@ -62,7 +62,7 @@ namespace Reddit.API.Model.Api
 
     //Other/Similar datatypes could inherit from this class
     //to determine how to adjust calls that need to be made
-    public class APILimits
+    public class ApiLimits
     {
         public int RateLimit_Remaining { get; set; }
         public int RateLimit_Used { get; set; }

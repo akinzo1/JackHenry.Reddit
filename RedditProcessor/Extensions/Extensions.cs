@@ -12,7 +12,7 @@ namespace RedditProcessor.Extensions
     {
         public static void AddApplicationServices(this IHostApplicationBuilder builder)
         {
-
+           
             builder.Services.AddHostedService<RedditManagerService>();
 
         }

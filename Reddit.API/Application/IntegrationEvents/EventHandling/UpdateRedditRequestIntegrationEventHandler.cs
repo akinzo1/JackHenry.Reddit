@@ -40,16 +40,19 @@ public class UpdateRedditRequestIntegrationEventHandler(IOptions<RedditSettings>
             //if success/failure, update the string builder to log to console at the end
 
             var redditParsed = JsonConvert.DeserializeObject<SubRedditApiResponse>(response);
-            var rateLimits = new APILimits();
+            var rateLimits = new ApiLimits();
 
             redditParsed.SubRedditName = @event.subReddit;
-            redditParsed.RateLimit_Reset = Convert.ToInt32(Math.Floor(Convert.ToDouble(result.Headers.FirstOrDefault(o => o.Key == "x-ratelimit-reset").Value.FirstOrDefault())));
-            redditParsed.RateLimit_Remaining = Convert.ToInt32(Math.Floor(Convert.ToDouble(result.Headers.FirstOrDefault(o => o.Key == "x-ratelimit-remaining").Value.FirstOrDefault())));
-            redditParsed.RateLimit_Used = Convert.ToInt32(Math.Floor(Convert.ToDouble(result.Headers.FirstOrDefault(o => o.Key == "x-ratelimit-used").Value.FirstOrDefault())));
             redditParsed.RequestDateTime = DateTime.UtcNow;
 
-            //store response into cache
-            var testSubRedditReturn = await _repository.UpdateListAsync(redditParsed);
+            rateLimits.RateLimit_Reset = Convert.ToInt32(Math.Floor(Convert.ToDouble(result.Headers.FirstOrDefault(o => o.Key == "x-ratelimit-reset").Value.FirstOrDefault())));
+            rateLimits.RateLimit_Remaining = Convert.ToInt32(Math.Floor(Convert.ToDouble(result.Headers.FirstOrDefault(o => o.Key == "x-ratelimit-remaining").Value.FirstOrDefault())));
+            rateLimits.RateLimit_Used = Convert.ToInt32(Math.Floor(Convert.ToDouble(result.Headers.FirstOrDefault(o => o.Key == "x-ratelimit-used").Value.FirstOrDefault())));
+
+            //store response and ratelimits into cache
+            await _repository.UpdateListAsync(redditParsed);
+            await _repository.UpdateLimitsAsync(rateLimits);
+
 
         }
         else
