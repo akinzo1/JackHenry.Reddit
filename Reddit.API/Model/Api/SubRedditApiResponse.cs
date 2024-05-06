@@ -2,10 +2,11 @@
 
 namespace Reddit.API.Model.Api
 {
-    public class SubReddit : APILimits
+    public class SubRedditApiResponse : APILimits
     {
         public required string Kind { get; set; }
-
+        public required string SubRedditName { get; set; }
+        public DateTime RequestDateTime { get; set; }   
 
         public required ListingData Data { get; set; }
 
@@ -21,11 +22,11 @@ namespace Reddit.API.Model.Api
         public class SubRedditList
         {
             public required string Kind { get; set; }
-            public required SubRedditData Data { get; set; }
+            public required SubReddit Data { get; set; }
 
         }
 
-        public class SubRedditData
+        public class SubReddit
         {
 
             public required string Author { get; set; }
@@ -36,7 +37,7 @@ namespace Reddit.API.Model.Api
             public required string SelfText { get; set; }
             public required string SelfText_HTML { get; set; }
             public required int num_comments { get; set; }
-
+            public required string Subreddit_name_prefixed { get; set; }
             //Derived property that would
             //convert UnixTime to standard datetime
             public DateTime CreatedDate
@@ -47,6 +48,7 @@ namespace Reddit.API.Model.Api
                 }
 
             }
+
         }
 
         public class UserCounts
@@ -54,6 +56,7 @@ namespace Reddit.API.Model.Api
             public required string Author { get; set; }
             public int TotalPosts { get; set; }
         }
+
 
     }
 

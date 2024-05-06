@@ -35,7 +35,7 @@ public class RedditManagerService(HttpClient httpClient, ILogger<RedditManagerSe
             {
 
                 //Make api call to handle the updating of the cache
-                var apiUrl = QueryHelpers.AddQueryString(remoteServiceBaseUrl, "reddit", reddit);
+                var apiUrl = QueryHelpers.AddQueryString(remoteServiceBaseUrl, "subreddit", reddit);
 
                 var requestMessage = new HttpRequestMessage(HttpMethod.Post, apiUrl);
                 requestMessage.Headers.Add("x-RequestId", Guid.NewGuid().ToString());

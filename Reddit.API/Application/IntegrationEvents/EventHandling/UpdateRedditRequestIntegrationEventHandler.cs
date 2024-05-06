@@ -2,6 +2,7 @@
 using EventBus.Events;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Reddit.API.Application.IntegrationEvents.Events;
 using Reddit.API.Model.Api;
 using Reddit.API.Model.Configuration;
@@ -12,30 +13,54 @@ namespace Reddit.API.Application.IntegrationEvents.EventHandling;
 
 public class UpdateRedditRequestIntegrationEventHandler(IOptions<RedditSettings> redditSettings, HttpClient httpClient, IRedditRepository _repository, ILogger<UpdateRedditRequestIntegrationEventHandler> logger) : IIntegrationEventHandler<UpdateRedditRequestIntegrationEvent>
 {
-    private static readonly string baseUrl = "https://oauth.reddit.com/";
+    private static readonly string baseUrl = "https://oauth.reddit.com/search";
 
     public async Task Handle(UpdateRedditRequestIntegrationEvent @event)
     {
         logger.LogInformation($"Handling integration event: {@event.Id} - ({@event})");
 
+        var queries = new List<KeyValuePair<string, string>>
+        {
+            new("q", @$"subreddit:{@event.subReddit}")
+        };
+
         //Make api call to handle the updating of the cache
-        var apiUrl = QueryHelpers.AddQueryString($"{baseUrl}{@event.statistic}", "reddit", @event.reddit);
-        var requestMessage = new HttpRequestMessage(HttpMethod.Post, apiUrl);
-        requestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", redditSettings.Value.Token);
+        var apiUrl = QueryHelpers.AddQueryString($"{baseUrl}", queries);
 
-        var result = await httpClient.SendAsync(requestMessage);
-        //if success/failure, update the string builder to log to console at the end
-        var response = await result.Content.ReadFromJsonAsync<SubReddit>();
+        httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", redditSettings.Value.Token);
+        httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("ChangeMeClient/0.1");
+
+        var result = await httpClient.GetAsync(apiUrl);
+
+        if (result.IsSuccessStatusCode != null)
+        {
+            var response = await result.Content.ReadAsStringAsync();
+           
+            //var upVotes = response.Data.Children.OrderByDescending(o => o.Data.Ups).Select(o => o.Data);
+            //if success/failure, update the string builder to log to console at the end
+
+            var redditParsed = JsonConvert.DeserializeObject<SubRedditApiResponse>(response);
+            var rateLimits = new APILimits();
+
+            redditParsed.SubRedditName = @event.subReddit;
+            redditParsed.RateLimit_Reset = Convert.ToInt32(Math.Floor(Convert.ToDouble(result.Headers.FirstOrDefault(o => o.Key == "x-ratelimit-reset").Value.FirstOrDefault())));
+            redditParsed.RateLimit_Remaining = Convert.ToInt32(Math.Floor(Convert.ToDouble(result.Headers.FirstOrDefault(o => o.Key == "x-ratelimit-remaining").Value.FirstOrDefault())));
+            redditParsed.RateLimit_Used = Convert.ToInt32(Math.Floor(Convert.ToDouble(result.Headers.FirstOrDefault(o => o.Key == "x-ratelimit-used").Value.FirstOrDefault())));
+            redditParsed.RequestDateTime = DateTime.UtcNow;
+
+            //store response into cache
+            var testSubRedditReturn = await _repository.UpdateListAsync(redditParsed);
+
+        }
+        else
+        {
+
+            //update the reddit for that cache back to "Needs to be reset"
+            var tt = 0;
 
 
 
-
-        //store the limits into cache
-
-        var t = await _repository.GetListAsync(@event.reddit);
-
-
-        await Task.Delay(100);
+        }
 
     }
 }

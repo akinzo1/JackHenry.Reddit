@@ -1,10 +1,11 @@
 ﻿using Reddit.API.Model;
+using Reddit.API.Model.Api;
 
 namespace Reddit.API;
 
 public interface IRedditRepository
 {
-    Task<RedditList?> GetListAsync(string reddit);
-    Task<RedditList?> UpdateListAsync(RedditList listName);
+    Task<SubRedditApiResponse?> GetListAsync(string reddit);
+    Task<SubRedditApiResponse?> UpdateListAsync(SubRedditApiResponse listName);
     Task<bool> DeleteListAsync(string id);
 }

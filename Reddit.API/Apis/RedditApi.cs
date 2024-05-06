@@ -18,11 +18,12 @@ public static class RedditApi
     }
 
 
-    public static async Task<Results<Ok<RedditApiResponse>, BadRequest<string>>> UpdateReddit([AsParameters] RedditService service, [FromQuery] string reddit, [FromHeader(Name = "statistics")] string statistics, [FromHeader(Name = "x-requestid")] Guid requestId)
+    public static async Task<Results<Ok<RedditApiResponse>, BadRequest<string>>> UpdateReddit([AsParameters] RedditService service, [FromQuery] string subreddit, [FromHeader(Name = "statistics")] string statistics, [FromHeader(Name = "x-requestid")] Guid requestId)
     {
 
         service.Logger.LogInformation("Request to log list to cache");
-        var updateRedditCommand = new UpdateRedditCommand(requestId, reddit, statistics.Split(","));
+
+        var updateRedditCommand = new UpdateRedditCommand(requestId, subreddit, statistics.Split(","));
         var commandResult = await service.Mediator.Send(updateRedditCommand);
 
         var response = new RedditApiResponse()
