@@ -11,9 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reddit.AppHost", "Reddit.Ap
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reddit.ServiceDefaults", "Reddit.ServiceDefaults\Reddit.ServiceDefaults.csproj", "{198EA877-542D-4575-A825-A82056BAC874}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBus", "EventBus\EventBus.csproj", "{E2FB091C-ED79-4B56-A26A-4FB0BAF2A34F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus", "EventBus\EventBus.csproj", "{E2FB091C-ED79-4B56-A26A-4FB0BAF2A34F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBusRabbitMQ", "EventBusRabbitMQ\EventBusRabbitMQ.csproj", "{B41BBD7F-ADB2-4020-B543-72C6F588F79E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBusRabbitMQ", "EventBusRabbitMQ\EventBusRabbitMQ.csproj", "{B41BBD7F-ADB2-4020-B543-72C6F588F79E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reddit.Client", "Reddit.Client\Reddit.Client.csproj", "{4243DB29-F425-452A-BAFF-480272DCCD2D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{B41BBD7F-ADB2-4020-B543-72C6F588F79E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B41BBD7F-ADB2-4020-B543-72C6F588F79E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B41BBD7F-ADB2-4020-B543-72C6F588F79E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4243DB29-F425-452A-BAFF-480272DCCD2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4243DB29-F425-452A-BAFF-480272DCCD2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4243DB29-F425-452A-BAFF-480272DCCD2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4243DB29-F425-452A-BAFF-480272DCCD2D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

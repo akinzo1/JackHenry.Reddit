@@ -12,4 +12,7 @@ builder.AddProject<Projects.Reddit_API>("reddit-api")
 builder.AddProject<Projects.RedditProcessor>("redditprocessor")
     .WithReference(rabbitMq);
 
+builder.AddProject<Projects.Reddit_Client>("reddit-client")
+    .WithReference(redis);
+
 builder.Build().Run();

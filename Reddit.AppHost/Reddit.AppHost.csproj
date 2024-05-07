@@ -18,6 +18,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Reddit.API\Reddit.API.csproj" />
 		<ProjectReference Include="..\RedditProcessor\RedditProcessor.csproj" />
+		<ProjectReference Include="..\Reddit.Client\Reddit.Client.csproj" />
 	</ItemGroup>
 
 </Project>
