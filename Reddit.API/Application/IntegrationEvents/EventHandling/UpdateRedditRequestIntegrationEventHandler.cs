@@ -35,7 +35,7 @@ public class UpdateRedditRequestIntegrationEventHandler(IOptions<RedditSettings>
         if (result.IsSuccessStatusCode != null)
         {
             var response = await result.Content.ReadAsStringAsync();
-           
+
             //var upVotes = response.Data.Children.OrderByDescending(o => o.Data.Ups).Select(o => o.Data);
             //if success/failure, update the string builder to log to console at the end
 
@@ -59,7 +59,7 @@ public class UpdateRedditRequestIntegrationEventHandler(IOptions<RedditSettings>
         {
 
             //update the reddit for that cache back to "Needs to be reset"
-            var tt = 0;
+            throw new HttpRequestException($"Could not load {apiUrl} for {@event}");
 
 
 

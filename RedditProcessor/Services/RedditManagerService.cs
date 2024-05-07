@@ -20,17 +20,14 @@ public class RedditManagerService(HttpClient httpClient, ILogger<RedditManagerSe
             logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
         }
 
+        var delay = 1000;
+
         while (!stoppingToken.IsCancellationRequested)
         {
             if (logger.IsEnabled(LogLevel.Information))
             {
                 logger.LogInformation("This logger working at: {time}", DateTimeOffset.Now);
             }
-
-
-            // Get RedditList that didn't get to be updated and add to the redditList. Process those first
-
-
 
             foreach (var reddit in redditList)
             {
@@ -43,24 +40,37 @@ public class RedditManagerService(HttpClient httpClient, ILogger<RedditManagerSe
                 requestMessage.Headers.Add("statistics", statistics);
 
                 var result = await httpClient.SendAsync(requestMessage);
-                //if success/failure, update the string builder to log to console at the end
+                
                 var response = await result.Content.ReadFromJsonAsync<ApiLimits>();
 
-
-                // Make the calculation for how long to delay for
                 if (response != null)
                 {
-                    logger.LogInformation($"Requested to update {reddit}. Requests remaining {response.RateLimit_Remaining}. Request Used {response.RateLimit_Used}. Request Reset: {response.RateLimit_Reset}");
+                    int remaining = response.RateLimit_Remaining;
+                    int used = response.RateLimit_Used;
+                    int reset = response.RateLimit_Reset;
+
+                    delay = CalculateDelay(remaining, reset, used);
+
+                    logger.LogInformation($"Requested to update {reddit}. Statistic: {statistics.ToString()}. Requests remaining {response.RateLimit_Remaining}. Request Used {response.RateLimit_Used}. Request Reset: {response.RateLimit_Reset}");
+
+                    Console.WriteLine($"Delay time is {delay}ms");
+
                 }
 
-
-                // With this new information, plan to delay proportionally
-                await Task.Delay(1000, stoppingToken);
+                await Task.Delay(delay, stoppingToken);
 
             }
 
             logger.LogInformation($"Loaded {redditList} at {DateTime.Now}");
         }
+    }
+
+    private int CalculateDelay(int remaining, int reset, int used)
+    {
+        var rate = Convert.ToDouble(remaining - 4 > 0 ? remaining - 4 : remaining) / Convert.ToDouble(reset + 5);
+
+        return rate == 0 ? 1000 : (int)((1 / rate) * 1000);
+
     }
 }
 
