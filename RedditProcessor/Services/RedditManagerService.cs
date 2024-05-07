@@ -10,7 +10,8 @@ public class RedditManagerService(HttpClient httpClient, ILogger<RedditManagerSe
 {
 
     private readonly string remoteServiceBaseUrl = "/api/reddit";
-    private readonly string[] redditList = { "bitcoin", "technology", "MadeMeSmile", "dotnet" };
+    //private readonly string[] redditList = { "bitcoin", "technology", "MadeMeSmile", "dotnet" };
+    private readonly string[] redditList = { "funny" };
     private readonly string[] statistics = { "MostUpVotes", "MostPosts" };
     private static readonly JsonSerializerOptions Options = new JsonSerializerOptions();
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)

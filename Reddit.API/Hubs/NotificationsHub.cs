@@ -10,12 +10,12 @@ public class NotificationsHub : Hub
         await Clients.All.SendAsync("ReceiveMessage", user, message);
     }
 
-    public async Task RedditUpVotesUpdated(IEnumerable<SubReddit> upVotes)
+    public async Task RedditUpVotesUpdated(List<SubReddit> upVotes, string name, DateTime createdDate)
     {
-        await Clients.All.SendAsync("RedditUpVotesUpdated", upVotes);
+        await Clients.All.SendAsync("RedditUpVotesUpdated", upVotes, name, createdDate);
     }
 
-    public async Task RedditMostPostsUpdated(IEnumerable<UserCounts> userCounts)
+    public async Task RedditMostPostsUpdated(List<UserCounts> userCounts)
     {
         await Clients.All.SendAsync("RedditMostPostsUpdated", userCounts);
     }

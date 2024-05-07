@@ -5,34 +5,39 @@
 @inject NavigationManager Navigation
 @implements IAsyncDisposable
 
-<PageTitle>Home</PageTitle>
-
-<div class="form-group">
-    <label>
-        User:
-        <input @bind="userInput" />
-    </label>
-</div>
-<div class="form-group">
-    <label>
-        Message:
-        <input @bind="messageInput" size="50" />
-    </label>
-</div>
-<button @onclick="Send" disabled="@(!IsConnected)">Send</button>
+<PageTitle>View Reddit</PageTitle>
 
 <hr>
 
-<ul id="messagesList">
-    @foreach (var message in messages)
-    {
-        <li>@message</li>
-    }
-</ul>
+<h3>@redditName downloaded at @createDate</h3>
+<table class="table" id="myTable">
+    <thead>
+        <tr>
+            <th>Author</th>
+            <th>Ups</th>
+            <th>Downs</th>
+            <th>Created Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var subReddit in redditUpVotes)
+        {
+            <tr>
+                <td>@subReddit.Author</td>
+                <td>@subReddit.Ups</td>
+                <td>@subReddit.Downs</td>
+                <td>@subReddit.CreatedDate</td>
+            </tr>
+        }
+    </tbody>
+</table>
 
 @code {
     private HubConnection? hubConnection;
     private List<string> messages = new List<string>();
+    private List<SubReddit> redditUpVotes = new List<SubReddit>();
+    private string? redditName;
+    private DateTime createDate;
     private string? userInput;
     private string? messageInput;
 
@@ -42,23 +47,25 @@
             .WithUrl(new Uri("https://localhost:7285/reddithub"))
             .Build();
 
-        hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
+        // hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
+        // {
+        //     var encodedMsg = $"{user}: {message}";
+        //     messages.Add(encodedMsg);
+        //     InvokeAsync(StateHasChanged);
+        // });
+
+        hubConnection.On<List<SubReddit>, string, DateTime>("RedditUpVotesUpdated", (upVotes, name, createdDate) =>
         {
-            var encodedMsg = $"{user}: {message}";
-            messages.Add(encodedMsg);
+            createDate = createdDate;
+            redditName = name;
+            redditUpVotes = upVotes;
             InvokeAsync(StateHasChanged);
         });
+
 
         await hubConnection.StartAsync();
     }
 
-    private async Task Send()
-    {
-        if (hubConnection is not null)
-        {
-            await hubConnection.SendAsync("SendMessage", userInput, messageInput);
-        }
-    }
 
     public bool IsConnected =>
         hubConnection?.State == HubConnectionState.Connected;
@@ -69,5 +76,26 @@
         {
             await hubConnection.DisposeAsync();
         }
+    }
+
+    public class UserCounts
+    {
+        public required string Author { get; set; }
+        public int TotalPosts { get; set; }
+    }
+    public class SubReddit
+    {
+        public required string Author { get; set; }
+        public required int Ups { get; set; }
+        public required int Downs { get; set; }
+        public required string Title { get; set; }
+        public required long Created { get; set; }
+        public required string SelfText { get; set; }
+        public required string SelfText_HTML { get; set; }
+        public required int num_comments { get; set; }
+        public required string Subreddit_name_prefixed { get; set; }
+        public DateTime CreatedDate { get; set; }
+
+
     }
 }
