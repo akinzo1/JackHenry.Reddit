@@ -23,6 +23,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseResponseCompression();
+
+app.MapHub<NotificationsHub>("/reddithub");
+
 app.UseHttpsRedirection();
 
 app.Run();

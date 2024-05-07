@@ -1,5 +1,6 @@
 ﻿using EventBus.Abstractions;
 using EventBus.Events;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -12,7 +13,7 @@ using static Reddit.API.Model.Api.SubRedditApiResponse;
 
 namespace Reddit.API.Application.IntegrationEvents.EventHandling;
 
-public class UpdateRedditRequestIntegrationEventHandler(IOptions<RedditSettings> redditSettings, HttpClient httpClient, IRedditRepository _repository, ILogger<UpdateRedditRequestIntegrationEventHandler> logger) : IIntegrationEventHandler<UpdateRedditRequestIntegrationEvent>
+public class UpdateRedditRequestIntegrationEventHandler(IOptions<RedditSettings> redditSettings, HttpClient httpClient, IRedditRepository _repository, ILogger<UpdateRedditRequestIntegrationEventHandler> logger, IHubContext<NotificationsHub> _hubContext) : IIntegrationEventHandler<UpdateRedditRequestIntegrationEvent>
 {
     private static readonly string baseUrl = "https://oauth.reddit.com/search";
 
@@ -52,19 +53,20 @@ public class UpdateRedditRequestIntegrationEventHandler(IOptions<RedditSettings>
                 //store response and ratelimits into cache
                 await _repository.UpdateListAsync(redditResponse);
                 await _repository.UpdateLimitsAsync(rateLimits);
-                
+
+                await _hubContext.Clients.All.SendAsync("ReceiveMessage", "Akin", $"It works for {@event.subReddit} on {@event.statistic}");
 
                 // depending on the statistic, use factory to get the exact data needed then save that
                 // Use signalr to send the upvotes/mostposts to UI 
                 if (@event.statistic == "MostUpVotes")
                 {
                     var upVotes = redditResponse.Data.Children.OrderByDescending(o => o.Data.Ups).Select(o => o.Data);
-
+                    await _hubContext.Clients.All.SendAsync("RedditUpVotesUpdated", upVotes);
                 }
                 else
                 {
                     var usersWithMostPosts = redditResponse.Data.Children.GroupBy(o => o.Data.Author).Select(i => new UserCounts() { Author = i.First().Data.Author, TotalPosts = i.Count() }).OrderByDescending(i => i.TotalPosts).ThenBy(o => o.Author);
-
+                    await _hubContext.Clients.All.SendAsync("RedditMostPostsUpdated", usersWithMostPosts);
                 }
 
             }

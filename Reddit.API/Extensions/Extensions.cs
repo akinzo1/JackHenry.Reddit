@@ -7,17 +7,20 @@ using EventBus.Extensions;
 using Reddit.API.Application.IntegrationEvents.Events;
 using Reddit.API.Application.IntegrationEvents.EventHandling;
 using Reddit.API.Model.Configuration;
+using Microsoft.AspNetCore.ResponseCompression;
 
 public static class Extensions
 {
     public static void AddApplicationServices(this IHostApplicationBuilder builder)
     {
         var services = builder.Services;
-        
-        builder.AddRedisClient("redis", null, configureOptions =>
+
+        builder.AddRedisClient("redis", configureOptions: configureOptions =>
         {
             configureOptions.ConnectTimeout = 100000;
         });
+
+        services.AddSignalR();
 
         services.AddScoped<IRedditRepository, RedisRedditRepository>();
 
@@ -37,6 +40,11 @@ public static class Extensions
             cfg.RegisterServicesFromAssemblyContaining(typeof(Program));
         });
 
+        services.AddResponseCompression(opts =>
+        {
+            opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+                  new[] { "application/octet-stream" });
+        });
     }
 
     //Convert to DateTime

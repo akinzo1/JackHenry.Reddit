@@ -40,7 +40,7 @@ public class RedditManagerService(HttpClient httpClient, ILogger<RedditManagerSe
                 requestMessage.Headers.Add("statistics", statistics);
 
                 var result = await httpClient.SendAsync(requestMessage);
-                
+
                 var response = await result.Content.ReadFromJsonAsync<ApiLimits>();
 
                 if (response != null)
@@ -67,9 +67,26 @@ public class RedditManagerService(HttpClient httpClient, ILogger<RedditManagerSe
 
     private int CalculateDelay(int remaining, int reset, int used)
     {
-        var rate = Convert.ToDouble(remaining - 4 > 0 ? remaining - 4 : remaining) / Convert.ToDouble(reset + 5);
 
-        return rate == 0 ? 1000 : (int)((1 / rate) * 1000);
+        if (remaining < 15 && reset > 0)
+        {
+            // take away from remaining and add to reset to fool
+            // the system into thinking we have a longer time to reset
+            // with fewer remaining allowed calls to be made.
+            // this also accounts for calls currently being processed
+            var rate = Convert.ToDouble(remaining - 4 > 0 ? remaining - 4 : remaining) / Convert.ToDouble(reset + 5);
+
+            if (rate < 1)
+            {
+                return (int)((1 / rate) * 1000);
+            }
+        }
+
+        return 1000;
+        //var rate = Convert.ToDouble(remaining - 4 > 0 ? remaining - 4 : remaining) / Convert.ToDouble(reset + 5);
+
+        //return rate == 0 ? 1000 : (int)((1 / rate) * 1000);
+
 
     }
 }
