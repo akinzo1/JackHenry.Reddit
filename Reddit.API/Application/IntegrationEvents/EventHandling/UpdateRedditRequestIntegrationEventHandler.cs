@@ -8,6 +8,7 @@ using Reddit.API.Model.Api;
 using Reddit.API.Model.Configuration;
 using System;
 using System.Net.Http;
+using static Reddit.API.Model.Api.SubRedditApiResponse;
 
 namespace Reddit.API.Application.IntegrationEvents.EventHandling;
 
@@ -32,36 +33,48 @@ public class UpdateRedditRequestIntegrationEventHandler(IOptions<RedditSettings>
 
         var result = await httpClient.GetAsync(apiUrl);
 
-        if (result.IsSuccessStatusCode != null)
+        if (result.IsSuccessStatusCode)
         {
             var response = await result.Content.ReadAsStringAsync();
-
-            //var upVotes = response.Data.Children.OrderByDescending(o => o.Data.Ups).Select(o => o.Data);
-            //if success/failure, update the string builder to log to console at the end
-
-            var redditParsed = JsonConvert.DeserializeObject<SubRedditApiResponse>(response);
+            var redditResponse = JsonConvert.DeserializeObject<SubRedditApiResponse>(response);
             var rateLimits = new ApiLimits();
 
-            redditParsed.SubRedditName = @event.subReddit;
-            redditParsed.RequestDateTime = DateTime.UtcNow;
+            if (redditResponse != null)
+            {
 
-            rateLimits.RateLimit_Reset = Convert.ToInt32(Math.Floor(Convert.ToDouble(result.Headers.FirstOrDefault(o => o.Key == "x-ratelimit-reset").Value.FirstOrDefault())));
-            rateLimits.RateLimit_Remaining = Convert.ToInt32(Math.Floor(Convert.ToDouble(result.Headers.FirstOrDefault(o => o.Key == "x-ratelimit-remaining").Value.FirstOrDefault())));
-            rateLimits.RateLimit_Used = Convert.ToInt32(Math.Floor(Convert.ToDouble(result.Headers.FirstOrDefault(o => o.Key == "x-ratelimit-used").Value.FirstOrDefault())));
+                redditResponse.SubRedditName = @event.subReddit;
+                redditResponse.RequestDateTime = DateTime.UtcNow;
 
-            //store response and ratelimits into cache
-            await _repository.UpdateListAsync(redditParsed);
-            await _repository.UpdateLimitsAsync(rateLimits);
+                rateLimits.RateLimit_Reset = Convert.ToInt32(Math.Floor(Convert.ToDouble(result.Headers.FirstOrDefault(o => o.Key == "x-ratelimit-reset").Value.FirstOrDefault())));
+                rateLimits.RateLimit_Remaining = Convert.ToInt32(Math.Floor(Convert.ToDouble(result.Headers.FirstOrDefault(o => o.Key == "x-ratelimit-remaining").Value.FirstOrDefault())));
+                rateLimits.RateLimit_Used = Convert.ToInt32(Math.Floor(Convert.ToDouble(result.Headers.FirstOrDefault(o => o.Key == "x-ratelimit-used").Value.FirstOrDefault())));
 
+                //store response and ratelimits into cache
+                await _repository.UpdateListAsync(redditResponse);
+                await _repository.UpdateLimitsAsync(rateLimits);
+                
+
+                // depending on the statistic, use factory to get the exact data needed then save that
+                // Use signalr to send the upvotes/mostposts to UI 
+                if (@event.statistic == "MostUpVotes")
+                {
+                    var upVotes = redditResponse.Data.Children.OrderByDescending(o => o.Data.Ups).Select(o => o.Data);
+
+                }
+                else
+                {
+                    var usersWithMostPosts = redditResponse.Data.Children.GroupBy(o => o.Data.Author).Select(i => new UserCounts() { Author = i.First().Data.Author, TotalPosts = i.Count() }).OrderByDescending(i => i.TotalPosts).ThenBy(o => o.Author);
+
+                }
+
+            }
 
         }
         else
         {
 
             //update the reddit for that cache back to "Needs to be reset"
-            throw new HttpRequestException($"Could not load {apiUrl} for {@event}");
-
-
+            throw new HttpRequestException($"Could not load {apiUrl}. Event: {@event}");
 
         }
 
