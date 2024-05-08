@@ -52,7 +52,7 @@ public class RedditManagerService(HttpClient httpClient, ILogger<RedditManagerSe
 
                     delay = CalculateDelay(remaining, reset, used);
 
-                    logger.LogInformation($"Requested to update {reddit}. Statistic: {statistics.ToString()}. Requests remaining {response.RateLimit_Remaining}. Request Used {response.RateLimit_Used}. Request Reset: {response.RateLimit_Reset}");
+                    logger.LogInformation($"Requested to update {reddit}. Statistic: {string.Join(", ", statistics)}. Requests remaining {response.RateLimit_Remaining}. Request Used {response.RateLimit_Used}. Request Reset: {response.RateLimit_Reset}");
 
                     Console.WriteLine($"Delay time is {delay}ms");
 

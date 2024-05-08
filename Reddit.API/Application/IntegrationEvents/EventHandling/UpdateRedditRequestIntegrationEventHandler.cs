@@ -46,6 +46,7 @@ public class UpdateRedditRequestIntegrationEventHandler(IOptions<RedditSettings>
                 redditResponse.SubRedditName = @event.subReddit;
                 redditResponse.RequestDateTime = DateTime.UtcNow;
 
+                // this can be cleaner
                 rateLimits.RateLimit_Reset = Convert.ToInt32(Math.Floor(Convert.ToDouble(result.Headers.FirstOrDefault(o => o.Key == "x-ratelimit-reset").Value.FirstOrDefault())));
                 rateLimits.RateLimit_Remaining = Convert.ToInt32(Math.Floor(Convert.ToDouble(result.Headers.FirstOrDefault(o => o.Key == "x-ratelimit-remaining").Value.FirstOrDefault())));
                 rateLimits.RateLimit_Used = Convert.ToInt32(Math.Floor(Convert.ToDouble(result.Headers.FirstOrDefault(o => o.Key == "x-ratelimit-used").Value.FirstOrDefault())));
@@ -53,8 +54,6 @@ public class UpdateRedditRequestIntegrationEventHandler(IOptions<RedditSettings>
                 //store response and ratelimits into cache
                 await _repository.UpdateListAsync(redditResponse);
                 await _repository.UpdateLimitsAsync(rateLimits);
-
-                //await _hubContext.Clients.All.SendAsync("ReceiveMessage", "Akin", $"It works for {@event.subReddit} on {@event.statistic}");
 
                 // depending on the statistic, use factory to get the exact data needed then save that
                 // Use signalr to send the upvotes/mostposts to UI 
@@ -76,7 +75,7 @@ public class UpdateRedditRequestIntegrationEventHandler(IOptions<RedditSettings>
         {
 
             //update the reddit for that cache back to "Needs to be reset"
-            throw new HttpRequestException($"Could not load {apiUrl}. Event: {@event}");
+            throw new HttpRequestException($"Could not load {apiUrl}. ResponseMessage: {result}. Event: {@event}");
 
         }
 

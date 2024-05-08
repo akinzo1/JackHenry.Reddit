@@ -18,7 +18,7 @@ public static class RabbitMqDependencyInjectionExtensions
 
         builder.AddRabbitMQClient(connectionName, configureSettings: settings =>
         {
-            settings.ConnectionString = "amqp://guest:guest@127.0.0.1:5672";
+            settings.ConnectionString = "amqp://localhost:5672"; // use 127.0.0.1 if IP not resolving to localhost 
         }, configureConnectionFactory: factory =>
         {
             ((ConnectionFactory)factory).DispatchConsumersAsync = true;

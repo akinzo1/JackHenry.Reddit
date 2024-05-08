@@ -45,6 +45,8 @@ namespace Reddit.API.Application.Commands
             {
                 _logger.LogError($"Failed: {ex}");
                 throw;
+                // Write a global exception handler to catch/resolve errors
+                
             }
 
 
